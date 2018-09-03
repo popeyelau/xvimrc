@@ -1,13 +1,5 @@
+
 " VIM SETTINGS <(
-" 要想成功,必先自宫!!!!!!!!!!
-nmap <Down> <Nop>
-nmap <Up> <Nop>
-nmap <Left> <Nop>
-nmap <Right> <Nop>
-imap <Down> <Nop>
-imap <Up> <Nop>
-imap <Left> <Nop>
-imap <Right> <Nop>
 " 搜索忽略大小写
 set ignorecase
 " 高亮搜索
@@ -15,11 +7,11 @@ set hlsearch
 " 显示行号和列号
 set ruler
 " 不显示状态行
-set laststatus=0
+" set laststatus=0
 " 共用剪贴板
-set clipboard=unnamed
-" 开启相对行号
+" set clipboard=unnamed
 set number
+" 开启相对行号
 set relativenumber
 set colorcolumn=+1
 " 分隔窗口在当前窗口右边/下边
@@ -27,20 +19,24 @@ set splitright
 set splitbelow
 " 高亮匹配括号
 set showmatch
+" 滚动
+set scrolljump=5
+set scrolloff=3
 ")>
 
-" INSERT MODE KEY MAPPING <( 
+" INSERT MODE KEY MAPPING <(
 " jj/jk/kk/ctrl+c/ctrl+[/esc 切回普通状态
-inoremap jj <Esc>
-inoremap jk <ESC>
-inoremap kk <ESC>
+i jj <Esc>
+i jk <ESC>
+i kk <ESC>
+i kd <ESC>
 " ctrl+a 行首
 inoremap <C-a> <C-o>^
 " ctrl+e 行尾
 inoremap <C-e> <C-o>$
 " ctrl+h 左
 inoremap <C-h> <Left>
-" ctrl+l 右 
+" ctrl+l 右
 inoremap <C-l> <Right>
 " ctrl+j 下
 inoremap <C-j> <Down>
@@ -52,36 +48,46 @@ inoremap <C-d> <BS>
 inoremap <C-f> <DEL>
 " ctrl+; 末尾追加; 并换行
 inoremap <C-;> <ESC>A;<ESC>o
+nnoremap <C-;> <ESC>A;<ESC>o
 " ctrl+o 创建新行
 inoremap <C-o> <ESC>o
-" 复制当前词
-" inoremap yiw <ESC>yiwa
 " 修改""中的内容
 inoremap ci" <ESC>ci"
-" 修改()中的内容
+" " 修改()中的内容
 inoremap ci( <ESC>T(ccit)
 inoremap ci) <ESC>T(ct)
 " 修改当前词
 inoremap ciw <ESC>ciw
-")>
+
+" 快速输入(卡 Orz)
+inoremap ,ws [weak self]
+inoremap ,ss guard let `self` = self else { return }
+"")>
 
 " NORMAL MODE KEYMAPPING <(
-"Tab键匹配符号
+" 自动置于中央
+nmap G Gzz
+nmap n nzz
+nmap N Nzz
+nmap x "_x
+" Tab键匹配符号
 nnoremap <tab> %
 " 自动换行时不跳过
-nnoremap j gj
-nnoremap k gk
+" nnoremap j gj
+" nnoremap k gk
 " J 下移5行
 nmap <S-J> 5j
 " K 上移5行
 nmap <S-K> 5k
-" gcc 注释/取消注释
-noremap gcc :xccmd commentAndUncommentCurrentLines<CR>
 " ctrl+h/j/k/l 窗口切换活动
 nmap <C-h> <C-w>h
 nmap <C-j> <C-w>j
 nmap <C-k> <C-w>k
 nmap <C-l> <C-w>l
+" 纵向窗口
+nmap <C-\> <C-w>v
+" 关闭窗口
+nmap <C--> <C-w>q
 " ctrl+a / H 行首
 nnoremap <C-a> ^
 noremap H ^
@@ -92,6 +98,7 @@ noremap L $
 " nnoremap $ <nop>
 " yL复制到行尾
 noremap yL y$
+noremap Y y$
 " yH复制到行首
 noremap yH y^
 " 去除高亮匹显示
@@ -108,52 +115,62 @@ nnoremap vv V
 noremap { f{
 "ctrl+,转到最上一次编辑位置
 noremap <C-,> `^
+"删除,内文本
+nmap di, f,dT,
+nmap ci, f,cT,
+nmap da, f,ld2F,i,<ESC>l
+nmap ca, f,ld2F,i,<ESC>a
+"删除环绕的{},"",'',()
+" "abc" -> abc|
+noremap ds{ F{xf}x
+noremap cs{ F{xf}xi
+noremap ds} F{xf}x
+noremap cs} F{xf}xi
+
+noremap ds" F"x,x
+noremap cs" F"x,xi
+noremap ds' F'x,x
+noremap cs' F'x,xi
+
+noremap ds( F(xf)x
+noremap cs( F(xf)xi
+noremap ds) F(xf)x
+noremap cs) F(xf)xi
+
+noremap ds[ F[xf]x
+noremap cs[ F[xf]xi
+noremap ds] F[xf]x
+noremap cs] F[xf]xi
+" abc -> "abc"
+noremap ys' bi'<ESC>ea'<ESC>
+noremap ys" bi"<ESC>ea"<ESC>
+noremap ys[ bi[<ESC>ea]<ESC>
+noremap ys] bi[<ESC>ea]<ESC>
+noremap ys( bi(<ESC>ea)<ESC>
+noremap ys) bi(<ESC>ea)<ESC>
 ")>
 
 " VISUAL MODE KEYMAPPING <(
+" 搜索选中文本
+vnoremap  *  y/<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
+vnoremap  #  y?<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
 " Tab键匹配符号
 vnoremap <tab> %
-" 退格键 删除
+" 退格键/ 回车 删除
 vnoremap <BS> di
 vnoremap <CR> s
+vnoremap ys( da(<ESC>pa)
+vnoremap ys" da"<ESC>pa"
+vnoremap ys' da'<ESC>pa'
+vnoremap ys[ da[<ESC>pa]
 " 代码缩进
 vnoremap < <gv
 vnoremap > >gv
 " q 回到普通模式
-vnoremap q <ESC>
+vnoremap q <ESC
 ")>
 
-" CUSTOM & TIPS<( 
-" Vim 语法结构：［数字］＋ 动词 ＋ 介词 ＋ 名词／符号
-"----------------------------------------------------
-"    动词   d(delete) c(change) y(yank) v(visual select)
-"    介词   i(inner) a(around) t(to) f(forward) 
-"    名词   w(word) s(sentence) p(paragraph)
-"    符号   ,   .   ;   (  )  [  ]  {  }
-"----------------------------------------------------
-" 示例
-" fa 在行内查找光标后(F光标前)出现的第一个a 用;继续向前查找 用,向后查找
-" dt) 从当前光标一直删除到第一个)之前 (delete to ))
-" yiw 复制当前词(yank inner word)
-" diw 删除当前词(ciw删除后进入编辑模式)
-" ddp 移到下一行
-" ddkp 移到上一行
-" V2jx3jp (V进入行可视状态 2j选中光标下2行 x剪切 3j下移3行 p粘帖)
-
-" 快速进行多行替换
-" 进入可视模式,选中要替换的区域 :s/hello/hi
-" :30,35s/hello/hi 将30-35行中的hello替换为hi
-
-" 快速复制
-" 进入可视模式,选中要替换的区域 :co 22 (在23行粘帖)
-" :30,35 co 22
-
-" gi 跳转到上一次Insert Mode的位置
-" gv 跳转到上一次Visual Mode的位置
-" * 高亮搜索当前词
-" g* 高亮搜索匹配项
-" 反向搜索 # g#
-" esc / ctrl+[ / ctrl+c
+" CUSTOM MAPPING <(
 " ctrl+p 插入模式粘贴
 inoremap <C-p> <ESC>pa
 " 大写转换
@@ -173,9 +190,9 @@ nnoremap yaf V$%jy
 " 修改()中的内容cib
 nnoremap ci( T(ct)
 nnoremap ci) T(ct)
+nnoremap ci[ T[ct]
+nnoremap ci] T[ct]
 " 选中()中的内容vib
-" nnoremap vi( T(vt)
-" nnoremap vi) T(vt)
 " 复制()中的内容yib
 nnoremap yi( T(yt)
 nnoremap yi) T(yt)
@@ -188,34 +205,48 @@ nnoremap vL v$
 nnoremap vH v^
 " 保存
 map ,w :w<CR>
-" 自动置于中央
-nmap G Gzz
-nmap n nzz
-nmap N Nzz
-" abc -> "abc"
-noremap ys" bi"<ESC>ea"<ESC>
+")>
 
-" 符号补全(有时候不是很方便)
-" imap <S-"> ""<ESC>i
-" imap <S-(> ()<ESC>i
-" imap <S-{> {}<ESC>i
-" imap [ []<ESC>i
-" imap ' ''<ESC>i
-" 快捷输入
-iabbr ws [weak self]
+" Quick Tips <(
+"
+" Vim 语法结构: ［数字］＋ 动词 ＋ 介词 ＋ 名词／符号
+"-------------------------------------------------------------------
+"    动词   d(delete)   c(change)   y(yank)     v(visual select)
+"    介词   i(inner)    a(around)   t(to)       f(forward)
+"    名词   w(word)     s(sentence) p(paragraph)
+"    符号   ,   .   ;   (  )  [  ]  {  }
+"
+"    g; / gi 回到最后修改的位置
+"
+"-------------------------------------------------------------------
+"
+" gi 跳转到上一次Insert Mode的位置(进入编辑模式)
+" noremap <C-,> `^ / gi
+"
+" gv 跳转到上一次Visual Mode的位置
+"
+" * 下一个
+" # 上一个
+"
+" Visual Mode 选中要替换的区域 :s/hello/hi (将hello替换为hi)
+"
+"
 ")>
 
 " Xcode CMD MAPPING <(
-" 定位行(cmd+l)
+" 注释
+noremap gcc :xcmenucmd Toggle Comments<CR>
+vnoremap gc :xcmenucmd Toggle Comments<CR>
+" 定位行(cmd+l / ,l / 10gg / :10)
 map ,l  :xccmd openQuicklyScoped<CR>
 " 快速打开(cmd+shift+o)
 map ,o  :xccmd openQuickly<CR>
-" 清理(cmd+shift+k) 
+" 清理(cmd+shift+k)
 map ,cp  :xcmenucmd Clean<CR>
 " 断点 (cmd+\)
 map ,p :xccmd toggleBreakpointAtCurrentLine<CR>
 " 在Finder中显示
-map ,in  :xccmd showInFinder<CR>
+map ,in :xccmd showInFinder<CR>
 " 新建标签
 map ,tt :xccmd newTab<CR>
 " 关闭标签
@@ -233,31 +264,30 @@ noremap ,cf <D-a>:xccmd indentSelection<CR>
 " 代码块
 map ,cs :xcmenucmd Show Code Snippet Library<CR>
 " 提示提示气泡
-map ,he :xcmenucmd Quick Help for Selected Item<CR>
+"map ,he :xcmenucmd Quick Help for Selected Item<CR>
 " 帮助
 map ,hi :xcmenucmd Show Quick Help Inspector<CR>
 " 文件
-map ,fi :xcmenucmd Show File Inspector<CR>
-
-" 左侧面板
+" map ,fi :xcmenucmd Show File Inspector<CR>
+" 左侧面板 show: cmd+1  hide: cmd+0
 map ,th :xccmd toggleNavigatorsVisibility<CR>
 " 底部面板
 map ,tj :xccmd toggleDebuggerVisibility<CR>
-" 右侧面板
+" 右侧面板 show: cmd+option+1 hide: cmd+option+0
 map ,tl :xccmd toggleUtilitiesVisibility<CR>
 " 调试面板
 map ,dc :xcmenucmd Activate Console<CR>
-
 " .h/.m文件切换
 map ,n :xccmd jumpToNextCounterpart<CR>
-" 前进
-map ,f :xccmd goForwardInHistoryByCommand<CR>
+" 显示当前类所有方法
+map ,g :xccmd showDocumentItemsMenu<CR>
+map ,li :xccmd showDocumentItemsMenu<CR>
 " 后退
 map ,b :xccmd goBackInHistoryByCommand<CR>
+" 前进
+map ,f :xccmd goForwardInHistoryByCommand<CR>
 " 定位到项目导航
 map ,pr :xccmd revealInProjectNavigator<CR>
-" 显示当前类所有方法
-map ,di :xccmd showDocumentItemsMenu<CR>
 " 折叠
 nnoremap ,zz :xccmd fold<CR>
 " 展开
@@ -268,7 +298,6 @@ nnoremap <C-z> :xccmd unfoldAll<CR>
 map ,ma :xccmd foldAllMethods<CR>
 " 展开全部
 map ,ua :xccmd unfoldAllMethods<CR>
-
 " 在workspace中搜索
 map ,s viw:xccmd findSelectedTextInWorkspace<CR>
 " 在帮助文档中搜索
@@ -277,4 +306,6 @@ map ,hh :xccmd searchDocumentationForSelectedText<CR>
 map ,cw  :xccmd performClose<CR>
 " 关闭当前文档
 map ,q  :xccmd closeDocument<CR>
+" 注释
+map ,cm  :xccmd addDocumentation<CR>
 " )>
